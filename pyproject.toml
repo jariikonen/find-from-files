@@ -6,7 +6,7 @@ authors = [
     {name = "Jari Ikonen",email = "87890204+jariikonen@users.noreply.github.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "colorama (>=0.4.6,<0.5.0)",
     "chardet (>=5.2.0,<6.0.0)",
