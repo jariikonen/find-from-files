@@ -358,15 +358,53 @@ def test_quieter_flag_does_not_print_files_with_no_matches(capsys):
 
     skipped_dirs = ["dir1", "skipThis"]
     check_dirs_are_not_printed(DIRECTORY_STRUCTURE, skipped_dirs, captured.out)
+    checked_dirs = [dir for dir in DIRECTORIES if dir not in skipped_dirs]
+    check_dirs_are_checked(DIRECTORY_STRUCTURE, checked_dirs, captured.out)
     skipped_files = (
         FILES_WITHOUT_SUFFIX
         + FILES_PY
         + FILES_TXT
         + ["file1.log", "file7.log", "file10.log"]
     )
+    check_files_are_not_printed(
+        DIRECTORY_STRUCTURE, skipped_files, captured.out
+    )
+
+    assert captured.out.count(REGEXP_MATCH_FOUND) == 0
+    assert captured.err == ""
+    assert captured.out.count("\n") == 4
+
+
+@patch.object(
+    sys,
+    "argv",
+    [
+        "find_from_files",
+        "--regexp",
+        ROOT,
+        "this does not match",
+        "--skip",
+        "dir1",
+        "skipThis",
+        "--quieter",
+    ],
+)
+@patch.object(
+    os, "walk", lambda *args, **kwargs: MockWalk(DIRECTORY_STRUCTURE, args[0])
+)
+@patch.object(find_from_files, "is_binary", lambda x: False)
+def test_quieter_flag_no_suffixes_does_not_print_files_with_no_matches(capsys):
+    with patch("builtins.open", mock_open(read_data="Tämä on testi.\n")):
+        find_from_files.main()
+
+    captured = capsys.readouterr()
+    # print(captured.out)  # uncomment to debug
+
+    skipped_dirs = ["dir1", "skipThis"]
+    check_dirs_are_not_printed(DIRECTORY_STRUCTURE, skipped_dirs, captured.out)
     checked_dirs = [dir for dir in DIRECTORIES if dir not in skipped_dirs]
     check_dirs_are_checked(DIRECTORY_STRUCTURE, checked_dirs, captured.out)
-    skipped_files = FILES_WITHOUT_SUFFIX + FILES_PY + FILES_TXT
+    skipped_files = FILES_WITHOUT_SUFFIX + FILES_PY + FILES_TXT + FILES_LOG
     check_files_are_not_printed(
         DIRECTORY_STRUCTURE, skipped_files, captured.out
     )

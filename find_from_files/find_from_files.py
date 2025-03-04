@@ -73,6 +73,20 @@ def traverse_directories(
 ):
     """Goes through directories starting from base_directory and applies
     search_func function to each file having one of the file_suffixes.
+
+    Args:
+        base_directory: The directory to start the search from.
+        file_suffixes: List of file suffixes to skip.
+        skip_prefixes: List of directory prefixies. A directory is skipped if
+            it starts with one of these.
+        search_string: String/regexp to search for.
+        whole_line: Boolean indicating whether to print the whole matched line
+            or just a count and line numbers.
+        quiet: Boolean to indicate quiet mode (skipped folders or files are not
+            printed).
+        quieter: Boolean to indicate quieter mode (in addition to quiet mode,
+            only files with matches are printed).
+        search_func: Function to use for checking the files.
     """
 
     def check_file(root, file_path, search_func, only_matches=False):
@@ -155,7 +169,7 @@ def traverse_directories(
                             columns,
                         )
             else:
-                check_file(root, file, search_func)
+                check_file(root, file, search_func, quieter)
 
 
 def color_matches(string, matches):
