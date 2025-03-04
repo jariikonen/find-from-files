@@ -1,4 +1,4 @@
-# find-it
+# find-from-files
 
 Simple CLI application for searching keywords/phrases or regular expression patterns from text files.
 
