@@ -3,10 +3,13 @@ name = "find-it"
 version = "0.1.0"
 description = "Simple CLI application for searching keywords/phrases or regular expression patterns from text files."
 authors = [
-    {name = "Jari Ikonen",email = "87890204+jariikonen@users.noreply.github.com"}
+    {name = "Jari Ikonen",email = "jariikonen.dev@gmail.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICEN[CS]E*", "THIRD_PARTY_LICENSES"]
+keywords = ["string-matching", "string", "search", "regular-expression", "text-files", "log-analysis"]
 dependencies = [
     "colorama (>=0.4.6,<0.5.0)",
     "chardet (>=5.2.0,<6.0.0)",
