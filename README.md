@@ -5,7 +5,7 @@ Simple CLI application for searching keywords/phrases or regular expression patt
 ## Usage
 
 ```
-usage: Find strings [-h] [-l] [-r] [-s [SUFFIX ...]] [-S [SKIP ...]] [-a] [-q] [-qq] base_directory search_string
+usage: find-from-files [-h] [-l] [-r] [-s [SUFFIX ...]] [-S [SKIP ...]] [-a] [-q] [-qq] base_directory search_string
 
 This script can be useful, e.g., for analyzing log files. When used without the --regex flag, it traverses through directories starting from the <base_directory> and prints the name of the file containing <search_string> and the line that it is on. This is handy if you want to quickly find the files that contain the string you are looking for. When used with the --regex flag, it searches for the <search_string> with Python regular expression function re.findall() in the files, and prints a summary containing the matches and their number. This allows you to search for all occurrences of a pattern in files. If the --whole-line flag is used, the whole line is printed instead of just the match (does nothing without the --regex flag).
 

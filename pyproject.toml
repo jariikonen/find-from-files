@@ -1,5 +1,5 @@
 [project]
-name = "find-it"
+name = "find-from-files"
 version = "0.1.0"
 description = "Simple CLI application for searching keywords/phrases or regular expression patterns from text files."
 authors = [

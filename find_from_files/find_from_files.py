@@ -19,9 +19,9 @@ import argparse
 import json
 from colorama import Fore, Back, Style, init as colorama_init, deinit as colorama_deinit
 from typing import Dict, TextIO, TypedDict
-from find_it.ansi_safe_split import ansi_safe_split
-from find_it.is_binary import is_binary
-from find_it.constants import ERASE_TO_THE_END_OF_LINE
+from find_from_files.ansi_safe_split import ansi_safe_split
+from find_from_files.is_binary import is_binary
+from find_from_files.constants import ERASE_TO_THE_END_OF_LINE
 
 SINGLE_INDENT_WIDTH = 4
 INDENT_LEVEL_FOLDER_FIRST_LINE = 0
@@ -248,7 +248,7 @@ def regex_search_with_string(
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="Find strings",
+        prog="find-from-files",
         description="""
             This script can be useful, e.g., for analyzing log files. When used
             without the --regex flag, it traverses through directories starting
@@ -268,7 +268,7 @@ def main():
     parser.add_argument(
         "base_directory", help="Base directory to start the " "search from."
     )
-    parser.add_argument("search_string", help="String to search for.")
+    parser.add_argument("search_string", help="String/regex to search for.")
     parser.add_argument(
         "-l",
         "--whole-line",

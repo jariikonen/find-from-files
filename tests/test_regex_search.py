@@ -1,4 +1,4 @@
-"""Tests for regexp searches with find_it.
+"""Tests for regexp searches with find_from_files.
 
 These are searches that are made with the --regexp flag and look for regular
 expression pattern matches from the files.
@@ -9,7 +9,7 @@ import sys
 from unittest.mock import patch, mock_open
 
 from colorama import Fore, Style
-from find_it import find_it
+from find_from_files import find_from_files
 
 from tests.constants import (
     DIRECTORIES,
@@ -43,14 +43,14 @@ REGEXP_MATCH_FOUND_WHOLE_LINES_MATCH = (
 )
 
 
-@patch.object(sys, "argv", ["find_it", "--regexp", ROOT, "test"])
+@patch.object(sys, "argv", ["find_from_files", "--regexp", ROOT, "test"])
 @patch.object(
     os, "walk", lambda *args, **kwargs: MockWalk(DIRECTORY_STRUCTURE, args[0])
 )
-@patch.object(find_it, "is_binary", lambda x: False)
+@patch.object(find_from_files, "is_binary", lambda x: False)
 def test_checks_every_file(capsys):
     with patch("builtins.open", mock_open(read_data="Tämä on testi.\n")):
-        find_it.main()
+        find_from_files.main()
 
     captured = capsys.readouterr()
     # print(captured.out)  # uncomment to debug
@@ -63,15 +63,15 @@ def test_checks_every_file(capsys):
 
 
 @patch.object(
-    sys, "argv", ["find_it", "--regexp", "--whole-line", ROOT, "test"]
+    sys, "argv", ["find_from_files", "--regexp", "--whole-line", ROOT, "test"]
 )
 @patch.object(
     os, "walk", lambda *args, **kwargs: MockWalk(DIRECTORY_STRUCTURE, args[0])
 )
-@patch.object(find_it, "is_binary", lambda x: False)
+@patch.object(find_from_files, "is_binary", lambda x: False)
 def test_checks_every_file_whole_line(capsys):
     with patch("builtins.open", mock_open(read_data="Tämä on testi.\n")):
-        find_it.main()
+        find_from_files.main()
 
     captured = capsys.readouterr()
     # print(captured.out)  # uncomment to debug
@@ -85,15 +85,17 @@ def test_checks_every_file_whole_line(capsys):
 
 
 @patch.object(
-    sys, "argv", ["find_it", "--regexp", ROOT, "test", "--skip", "skipThis"]
+    sys,
+    "argv",
+    ["find_from_files", "--regexp", ROOT, "test", "--skip", "skipThis"],
 )
 @patch.object(
     os, "walk", lambda *args, **kwargs: MockWalk(DIRECTORY_STRUCTURE, args[0])
 )
-@patch.object(find_it, "is_binary", lambda x: False)
+@patch.object(find_from_files, "is_binary", lambda x: False)
 def test_skips_directories_correctly(capsys):
     with patch("builtins.open", mock_open(read_data="Tämä on testi.\n")):
-        find_it.main()
+        find_from_files.main()
 
     captured = capsys.readouterr()
     # print(captured.out)  # uncomment to debug
@@ -110,15 +112,17 @@ def test_skips_directories_correctly(capsys):
 
 
 @patch.object(
-    sys, "argv", ["find_it", "--regexp", ROOT, "test", "--suffix", ".log"]
+    sys,
+    "argv",
+    ["find_from_files", "--regexp", ROOT, "test", "--suffix", ".log"],
 )
 @patch.object(
     os, "walk", lambda *args, **kwargs: MockWalk(DIRECTORY_STRUCTURE, args[0])
 )
-@patch.object(find_it, "is_binary", lambda x: False)
+@patch.object(find_from_files, "is_binary", lambda x: False)
 def test_skips_files_correctly(capsys):
     with patch("builtins.open", mock_open(read_data="Tämä on testi.\n")):
-        find_it.main()
+        find_from_files.main()
 
     captured = capsys.readouterr()
     # print(captured.out)  # uncomment to debug
@@ -136,15 +140,24 @@ def test_skips_files_correctly(capsys):
 @patch.object(
     sys,
     "argv",
-    ["find_it", "--regexp", ROOT, "test", "--skip", "dir1", "skipThis", "dir5"],
+    [
+        "find_from_files",
+        "--regexp",
+        ROOT,
+        "test",
+        "--skip",
+        "dir1",
+        "skipThis",
+        "dir5",
+    ],
 )
 @patch.object(
     os, "walk", lambda *args, **kwargs: MockWalk(DIRECTORY_STRUCTURE, args[0])
 )
-@patch.object(find_it, "is_binary", lambda x: False)
+@patch.object(find_from_files, "is_binary", lambda x: False)
 def test_skips_multiple_directories_correctly(capsys):
     with patch("builtins.open", mock_open(read_data="Tämä on testi.\n")):
-        find_it.main()
+        find_from_files.main()
 
     captured = capsys.readouterr()
     # print(captured.out)  # uncomment to debug
@@ -164,15 +177,15 @@ def test_skips_multiple_directories_correctly(capsys):
 @patch.object(
     sys,
     "argv",
-    ["find_it", "--regexp", ROOT, "test", "--suffix", ".log", ".txt"],
+    ["find_from_files", "--regexp", ROOT, "test", "--suffix", ".log", ".txt"],
 )
 @patch.object(
     os, "walk", lambda *args, **kwargs: MockWalk(DIRECTORY_STRUCTURE, args[0])
 )
-@patch.object(find_it, "is_binary", lambda x: False)
+@patch.object(find_from_files, "is_binary", lambda x: False)
 def test_handles_multiple_file_suffixes_correctly(capsys):
     with patch("builtins.open", mock_open(read_data="Tämä on testi.\n")):
-        find_it.main()
+        find_from_files.main()
 
     captured = capsys.readouterr()
     # print(captured.out)  # uncomment to debug
@@ -191,7 +204,7 @@ def test_handles_multiple_file_suffixes_correctly(capsys):
     sys,
     "argv",
     [
-        "find_it",
+        "find_from_files",
         "--regexp",
         ROOT,
         "test",
@@ -206,10 +219,10 @@ def test_handles_multiple_file_suffixes_correctly(capsys):
 @patch.object(
     os, "walk", lambda *args, **kwargs: MockWalk(DIRECTORY_STRUCTURE, args[0])
 )
-@patch.object(find_it, "is_binary", lambda x: False)
+@patch.object(find_from_files, "is_binary", lambda x: False)
 def test_quiet_flag_works_correctly(capsys):
     with patch("builtins.open", mock_open(read_data="Tämä on testi.\n")):
-        find_it.main()
+        find_from_files.main()
 
     captured = capsys.readouterr()
     # print(captured.out)  # uncomment to debug
@@ -234,7 +247,7 @@ def test_quiet_flag_works_correctly(capsys):
     sys,
     "argv",
     [
-        "find_it",
+        "find_from_files",
         "--regexp",
         ROOT,
         "this is not found",
@@ -249,10 +262,10 @@ def test_quiet_flag_works_correctly(capsys):
 @patch.object(
     os, "walk", lambda *args, **kwargs: MockWalk(DIRECTORY_STRUCTURE, args[0])
 )
-@patch.object(find_it, "is_binary", lambda x: False)
+@patch.object(find_from_files, "is_binary", lambda x: False)
 def test_quiet_flag_prints_checked_files_with_no_matches(capsys):
     with patch("builtins.open", mock_open(read_data="Tämä on testi.\n")):
-        find_it.main()
+        find_from_files.main()
 
     captured = capsys.readouterr()
     # print(captured.out)  # uncomment to debug
@@ -277,7 +290,7 @@ def test_quiet_flag_prints_checked_files_with_no_matches(capsys):
     sys,
     "argv",
     [
-        "find_it",
+        "find_from_files",
         "--regexp",
         ROOT,
         "test",
@@ -292,10 +305,10 @@ def test_quiet_flag_prints_checked_files_with_no_matches(capsys):
 @patch.object(
     os, "walk", lambda *args, **kwargs: MockWalk(DIRECTORY_STRUCTURE, args[0])
 )
-@patch.object(find_it, "is_binary", lambda x: False)
+@patch.object(find_from_files, "is_binary", lambda x: False)
 def test_quieter_flag_prints_files_with_matches(capsys):
     with patch("builtins.open", mock_open(read_data="Tämä on testi.\n")):
-        find_it.main()
+        find_from_files.main()
 
     captured = capsys.readouterr()
     # print(captured.out)  # uncomment to debug
@@ -320,7 +333,7 @@ def test_quieter_flag_prints_files_with_matches(capsys):
     sys,
     "argv",
     [
-        "find_it",
+        "find_from_files",
         "--regexp",
         ROOT,
         "this does not match",
@@ -335,10 +348,10 @@ def test_quieter_flag_prints_files_with_matches(capsys):
 @patch.object(
     os, "walk", lambda *args, **kwargs: MockWalk(DIRECTORY_STRUCTURE, args[0])
 )
-@patch.object(find_it, "is_binary", lambda x: False)
+@patch.object(find_from_files, "is_binary", lambda x: False)
 def test_quieter_flag_does_not_print_files_with_no_matches(capsys):
     with patch("builtins.open", mock_open(read_data="Tämä on testi.\n")):
-        find_it.main()
+        find_from_files.main()
 
     captured = capsys.readouterr()
     # print(captured.out)  # uncomment to debug
