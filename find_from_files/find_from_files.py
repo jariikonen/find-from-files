@@ -17,6 +17,7 @@ import os
 import re
 import argparse
 import json
+import importlib.metadata
 from colorama import Fore, Back, Style, init as colorama_init, deinit as colorama_deinit
 from typing import Dict, TextIO, TypedDict
 from find_from_files.ansi_safe_split import ansi_safe_split
@@ -261,6 +262,14 @@ def regex_search_with_string(
 
 
 def main():
+    version_string = "Package find-from-files not found."
+    try:
+        version_string = (
+            f'find-from-files v{importlib.metadata.version("find-from-files")}'
+        )
+    except importlib.metadata.PackageNotFoundError:
+        pass
+
     parser = argparse.ArgumentParser(
         prog="find-from-files",
         description="""
@@ -330,6 +339,12 @@ def main():
         action="store_true",
         help="Do not print skipped folders or files, and only print the files "
         "that contain the search string/pattern.",
+    )
+    parser.add_argument(
+        "-V",
+        "--version",
+        action="version",
+        version=version_string,
     )
 
     args = parser.parse_args()
