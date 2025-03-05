@@ -38,4 +38,5 @@ options:
   -q, --quiet           Do not print skipped folders or files.
   -qq, --quieter        Do not print skipped folders or files, and only print
                         the files that contain the search string/pattern.
+  -V, --version         show program's version number and exit
 ```
