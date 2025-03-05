@@ -18,6 +18,7 @@ import re
 import argparse
 import json
 import importlib.metadata
+import time
 from colorama import Fore, Back, Style, init as colorama_init, deinit as colorama_deinit
 from typing import Dict, TextIO, TypedDict
 from find_from_files.ansi_safe_split import ansi_safe_split
@@ -96,6 +97,8 @@ def traverse_directories(
         try:
             with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                 match_output = search_func(search_string, f, whole_line)
+        except KeyboardInterrupt:
+            pass
         except OSError as e:
             print(f"ERROR reading {file_path}: {e}")
         if not only_matches or (only_matches and match_output):
@@ -115,62 +118,67 @@ def traverse_directories(
         file_suffixes = tuple(file_suffixes)
     sub_dirs_to_skip = []
 
-    for root, dirs, files in os.walk(base_directory):
-        # Skip folders that don't start with any of the skip_prefixes
-        dirs.sort()
-        files.sort()
-        columns = get_terminal_width()
-        if skip_prefixes is not None and len(skip_prefixes) > 0:
-            if os.path.basename(root).startswith(skip_prefixes):
-                sub_dirs_to_skip.extend(dirs)
-                if not quiet:
-                    print_indented(
-                        f"{Fore.RED}Skipping folder: {Fore.YELLOW}"
-                        f"{root}{Style.RESET_ALL}",
-                        INDENT_LEVEL_FOLDER_FIRST_LINE,
-                        INDENT_LEVEL_FOLDER_NEXT_LINES,
-                        columns,
-                    )
-                continue
-            elif os.path.basename(root) in sub_dirs_to_skip:
-                sub_dirs_to_skip.remove(os.path.basename(root))
-                sub_dirs_to_skip.extend(dirs)
-                continue
-        print_indented(
-            f"{Fore.GREEN}Checking folder: {Fore.YELLOW}{root}"
-            f"{Style.RESET_ALL}",
-            INDENT_LEVEL_FOLDER_FIRST_LINE,
-            INDENT_LEVEL_FOLDER_NEXT_LINES,
-            columns,
-        )
+    try:
+        for root, dirs, files in os.walk(base_directory):
+            time.sleep(0)  # Give Python a chance to process Ctrl+C
+            dirs.sort()
+            files.sort()
+            columns = get_terminal_width()
+            # Skip folders that don't start with any of the skip_prefixes
+            if skip_prefixes is not None and len(skip_prefixes) > 0:
+                if os.path.basename(root).startswith(skip_prefixes):
+                    sub_dirs_to_skip.extend(dirs)
+                    if not quiet:
+                        print_indented(
+                            f"{Fore.RED}Skipping folder: {Fore.YELLOW}"
+                            f"{root}{Style.RESET_ALL}",
+                            INDENT_LEVEL_FOLDER_FIRST_LINE,
+                            INDENT_LEVEL_FOLDER_NEXT_LINES,
+                            columns,
+                        )
+                    continue
+                elif os.path.basename(root) in sub_dirs_to_skip:
+                    sub_dirs_to_skip.remove(os.path.basename(root))
+                    sub_dirs_to_skip.extend(dirs)
+                    continue
+            print_indented(
+                f"{Fore.GREEN}Checking folder: {Fore.YELLOW}{root}"
+                f"{Style.RESET_ALL}",
+                INDENT_LEVEL_FOLDER_FIRST_LINE,
+                INDENT_LEVEL_FOLDER_NEXT_LINES,
+                columns,
+            )
 
-        for file in files:
-            file_path = os.path.join(root, file)
-            if is_binary(open(file_path, "rb").read(2048)):
-                if not quiet:
-                    print_indented(
-                        f"{Fore.RED}Skipping file: {Fore.YELLOW}"
-                        f"{file_path} {Fore.WHITE}(probably binary)"
-                        f"{Style.RESET_ALL}",
-                        INDENT_LEVEL_FILE_FIRST_LINE,
-                        INDENT_LEVEL_FILE_NEXT_LINES,
-                        columns,
-                    )
-                continue
-            if file_suffixes is not None and len(file_suffixes) > 0:
-                if file.endswith(file_suffixes):
-                    check_file(root, file, search_func, quieter)
-                else:
+            for file in files:
+                time.sleep(0)  # Give Python a chance to process Ctrl+C
+                file_path = os.path.join(root, file)
+                if is_binary(open(file_path, "rb").read(2048)):
                     if not quiet:
                         print_indented(
                             f"{Fore.RED}Skipping file: {Fore.YELLOW}"
-                            f"{file_path}{Style.RESET_ALL}",
+                            f"{file_path} {Fore.WHITE}(probably binary)"
+                            f"{Style.RESET_ALL}",
                             INDENT_LEVEL_FILE_FIRST_LINE,
                             INDENT_LEVEL_FILE_NEXT_LINES,
                             columns,
                         )
-            else:
-                check_file(root, file, search_func, quieter)
+                    continue
+                if file_suffixes is not None and len(file_suffixes) > 0:
+                    if file.endswith(file_suffixes):
+                        check_file(root, file, search_func, quieter)
+                    else:
+                        if not quiet:
+                            print_indented(
+                                f"{Fore.RED}Skipping file: {Fore.YELLOW}"
+                                f"{file_path}{Style.RESET_ALL}",
+                                INDENT_LEVEL_FILE_FIRST_LINE,
+                                INDENT_LEVEL_FILE_NEXT_LINES,
+                                columns,
+                            )
+                else:
+                    check_file(root, file, search_func, quieter)
+    except KeyboardInterrupt:
+        pass
 
 
 def color_matches(string, matches):
@@ -373,6 +381,7 @@ def main():
         search_func = regex_search_with_string
     else:
         search_func = find_folders_with_string
+
     traverse_directories(
         args.base_directory,
         args.suffix,
