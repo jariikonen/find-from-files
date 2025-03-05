@@ -15,6 +15,9 @@ dependencies = [
     "chardet (>=5.2.0,<6.0.0)",
 ]
 
+[project.urls]
+repository = "https://github.com/jariikonen/find-from-files"
+
 [tool.poetry.scripts]
 find-from-files = "find_from_files.find_from_files:main"
 
