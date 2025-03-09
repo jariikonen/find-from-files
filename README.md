@@ -1,5 +1,7 @@
 # find-from-files
 
+![SVG animation of using the find-in-files command.](fff.svg)
+
 Simple CLI application for searching keywords/phrases or regular expression patterns from text files.
 
 ## Usage
